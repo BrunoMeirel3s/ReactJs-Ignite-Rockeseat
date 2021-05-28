@@ -1,0 +1,31 @@
+section.repository-list {
+  margin: 40px;
+
+  h1 {
+    margin-bottom: 16px;
+  }
+  ul {
+    list-style: none;
+  }
+
+  //Usando o & nós podemos referenciar o próprio elemento, no caso o efeito abaixo será aplicado apenas caso
+  //exista um li e + 1 acima, não sendo aplicada na primeira li
+  li {
+    & + li {
+      margin-top: 20px;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    color: #333;
+    margin-top: 8px;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 16px;
+    text-decoration: none;
+    color: #8257e6;
+  }
+}
