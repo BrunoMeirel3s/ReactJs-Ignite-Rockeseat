@@ -50,4 +50,45 @@ export const GlobalStyle = createGlobalStyle`
         opacity: 0.6;
         cursor: not-allowed;
     }
+
+    /**
+        .react-modal-overlay será a classe que iremos aplicar ao fundo quando chamarmos
+        o modal, para que seja realizado o efeito de background com um certo desfoque,
+        react-modal-content será o estilo css aplicado ao ao conteúdo do modal em si,
+        .react-modal-close será o estilo aplicado ao botão de fechar o modal
+     */
+    .react-modal-overlay {
+        background: rgba(0,0,0,0.5);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .react-modal-content {
+        width: 100%;
+        max-width:576px;
+        background: var(--background);
+        padding: 3rem;
+        position: relative;
+        border-radius: 0.25rem;
+    }
+
+    .react-modal-close {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        border: 0;
+        background: transparent;
+
+        transition: filter 0.2s;
+        &:hover{
+            filter: brightness(0.8);
+        }
+    }
 `;
