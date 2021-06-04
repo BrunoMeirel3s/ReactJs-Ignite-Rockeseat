@@ -1,10 +1,11 @@
 import Modal from "react-modal";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useContext } from "react";
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
-import { api } from "../../services/api";
+
+import { useTransactions } from "../../hooks/useTransactions";
 
 interface NewTransactionModalProps {
   isOpen: boolean;
@@ -14,23 +15,36 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
+  /**
+   * createTransaction é a função passada lá no contexto, passamos a mesma atráves
+   * do TransactionsContext.Provider, dessa forma podemos salvar a nova transação
+   */
+  const { createTransaction } = useTransactions();
   const [title, setTitle] = useState("");
-  const [value, setValue] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState("");
 
   const [type, setType] = useState("deposit");
 
-  function handleCreateNewTransaction(event: FormEvent) {
+  //Função que será passada para o método submit do formulário
+  async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
 
-    const data = {
+    await createTransaction({
       title,
-      value,
+      amount,
       category,
       type,
-    };
+    });
 
-    api.post("/transactions", data);
+    //Aqui estamos rezetando os valores para quando abrirmos o modal novamente ele vir zerado
+    setTitle("");
+    setAmount(0);
+    setCategory("");
+    setType("deposit");
+
+    //fecha o modal
+    onRequestClose();
   }
   return (
     <>
@@ -47,6 +61,9 @@ export function NewTransactionModal({
         overlayClassName="react-modal-overlay"
         className="react-modal-content"
       >
+        {/**
+         * Botão responsável por fechar o modal
+         */}
         <button
           type="button"
           onClick={onRequestClose}
@@ -66,8 +83,8 @@ export function NewTransactionModal({
           <input
             type="number"
             placeholder="Valor"
-            value={value}
-            onChange={(event) => setValue(Number(event.target.value))}
+            value={amount}
+            onChange={(event) => setAmount(Number(event.target.value))}
           />
 
           <TransactionTypeContainer>
