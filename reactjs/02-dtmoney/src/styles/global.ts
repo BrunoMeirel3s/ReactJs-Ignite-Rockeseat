@@ -1,3 +1,5 @@
+//Para criar estilos globais utilizando o styled-componentes devemos utilizar o estilo abaixo
+
 import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
     :root{
@@ -46,6 +48,7 @@ export const GlobalStyle = createGlobalStyle`
         cursor: pointer;
     }
 
+    //Irá dar efeito de desabilitado para elementos com disabled
     [disabled]{
         opacity: 0.6;
         cursor: not-allowed;
