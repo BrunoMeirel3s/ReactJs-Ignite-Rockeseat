@@ -7,6 +7,7 @@ import { Dashboard } from "./components/dashboard";
 import { NewTransactionModal } from "./components/newTransactionModal";
 import { TransactionsProvider } from "./hooks/useTransactions";
 
+//Necessário informar o elemento root para o modal por questões de acessibilidade
 Modal.setAppElement("#root");
 
 export function App() {

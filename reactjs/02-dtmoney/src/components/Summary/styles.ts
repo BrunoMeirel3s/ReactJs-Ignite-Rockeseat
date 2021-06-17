@@ -29,5 +29,10 @@ export const Container = styled.div`
       background: var(--green);
       color: white;
     }
+
+    &.highlight-background-loss {
+      background: var(--red);
+      color: white;
+    }
   }
 `;

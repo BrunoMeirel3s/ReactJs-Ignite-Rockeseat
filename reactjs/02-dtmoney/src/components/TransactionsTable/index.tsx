@@ -1,6 +1,4 @@
-import { useEffect, useState, useContext } from "react";
 import { useTransactions } from "../../hooks/useTransactions";
-import { api } from "../../services/api";
 import { Container } from "./styles";
 
 export function TransactionTable() {

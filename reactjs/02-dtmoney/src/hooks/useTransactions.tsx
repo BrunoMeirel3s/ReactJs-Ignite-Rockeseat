@@ -29,6 +29,7 @@ interface TransactionInput {
   category: string;
 }*/
 //type TransactionInput = Pick<Transaction, 'title' | "amount" | 'type' | 'createdAt'>
+//usamos o omit para remover os dois campos id e createdAt
 type TransactionInput = Omit<Transaction, "id" | "createdAt">;
 
 //Esta interface será necessária para dizer que o TransactionsProvider pode receber outros componentes dentro dele
