@@ -35,11 +35,18 @@ export function SubscribeButton({ priceId }: SubscribeButtonProps) {
       return;
     }
 
-    //criação do checkout session que é a realização da compra do produto
+    /**
+     * Criação do checkoutSession, lembrando que não podemos realizar requisições direto do componente
+     * para o nosso 'backend' pois senão estaríamos tornando público todos nossos métodos
+     * de comunicação e nossa variáveis de ambiente de acesso as APIS
+     */
     try {
+      //Realizamos o checkou utilizando o subscribe na nossa api
       const response = await api.post("/subscribe");
+      //nossa api nos retorna o sessionID
       const { sessionId } = response.data;
 
+      //Cliente público do stripe para realizar requisições sem a chave privada
       const stripe = await getStripeJs();
 
       //redireciona o usuário para a compra do produto

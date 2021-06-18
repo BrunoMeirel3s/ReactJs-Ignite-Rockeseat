@@ -1,3 +1,7 @@
+/*
+ * Arquivos criados utilizando _ na frente não irão virar rotas da aplicação
+ */
+
 import { fauna } from "../../../services/fauna";
 import { query as q } from "faunadb";
 import { stripe } from "../../../services/stripe";
@@ -19,6 +23,7 @@ export async function saveSubscription(
 
   //Obtemos todos os dados da subscription do usuário direto da stripe
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
   const subscriptionData = {
     id: subscription.id,
     userId: userRef,

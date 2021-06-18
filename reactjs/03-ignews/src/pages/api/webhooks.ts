@@ -32,6 +32,7 @@ export const config = {
 };
 
 //eventos que iremos ouvir da stripe
+//Set é como se fosse um array porém não pode ter valores repetidos
 const relevantEvents = new Set([
   "checkout.session.completed",
   "customer.subscription.updated",

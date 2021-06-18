@@ -32,7 +32,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (!customerId) {
       /**
        * Para identificarmos os nossos clientes no stripe nós criamos uma conta de cliente para os mesmos
-       * por isso que obtemos informações da seção do usuário, no caso iremos utilizar o campo de e-mail
+       * por isso que obtemos informações da seção do usuário no inicio, no caso iremos utilizar o campo de e-mail
+       * para criar o customer no stripe
        */
       const stripeCustomer = await stripe.customers.create({
         email: session.user.email,

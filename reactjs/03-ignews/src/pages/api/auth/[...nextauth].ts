@@ -23,8 +23,8 @@ export default NextAuth({
     }),
   ],
 
-  //As callbacks são executadas sempre que é realizado um login, no caso abaixo estamos obtendo as informações do
-  //usuário ao logar e após isso inserindo no nosso banco do faunaDB
+  //As callbacks são executadas sempre que é realizado um processo, no caso abaixo iremos pegar a ação de login,
+  // no caso abaixo estamos obtendo as informações do usuário ao logar e após isso inserindo no nosso banco do faunaDB
   callbacks: {
     async session(session) {
       try {
