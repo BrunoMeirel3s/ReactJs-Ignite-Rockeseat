@@ -42,6 +42,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   const session = await getSession({ req });
   const { slug } = params;
 
+  /**
+   * Caso o usuário não possua uma inscrição ativa iremos redirecionar o mesmo, e dentro do getServerSideProps
+   * realizamos o redirecionamento utilizanod a estrutura redirect abaixo
+   */
   if (!session?.activeSubscription) {
     return {
       redirect: {

@@ -23,6 +23,11 @@ export default function PostPreview({ post }: PostPreviewProps) {
   const [session] = useSession();
   const router = useRouter();
 
+  /**
+   * Aqui estamos checando ao iniciar o componente de preview do post se o usuário possui uma inscrição
+   * ativa, importante entender que como este componente utiliza getStaticProps não é possível ter acesso
+   * ao req e por isso esta verificação é feita aqui no componente, utilizanod o useSession
+   */
   useEffect(() => {
     if (session?.activeSubscription) {
       router.push(`/posts/${post.slug}`);
@@ -54,9 +59,17 @@ export default function PostPreview({ post }: PostPreviewProps) {
   );
 }
 
+/**
+ * getStatisPaths é utilizado para informar para o next quais as páginas que nós
+ * queremos que sejam pré criadas durante o build do projeto, para isso no campo
+ * paths devemos informar quais as páginas queremos que sejam geradas durante o build,
+ * neste caso deveriamos informar os slugs dos posts dentro de um objeto
+ */
 export const getStaticPaths = () => {
   return {
-    paths: [],
+    paths: [
+      /*{ params: { slug: "mapas-com-react-usando-leaflet" } }*/
+    ],
     fallback: "blocking",
   };
 };
