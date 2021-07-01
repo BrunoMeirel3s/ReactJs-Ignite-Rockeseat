@@ -39,9 +39,8 @@ interface TransactionsProviderProps {
 }
 
 /**
- * a interface TransactionsContextData irá nos permitir receber as transações
- *  e a função que irá enviar as transações para o backend, a função TransactionInput é
- * assincrona, desta forma retorna uma promise
+ * a interface TransactionsContextData informa quais os valores que o contexto irá
+ * retornar para nossa aplicação, os valores informados no value ali do Provider
  */
 interface TransactionsContextData {
   transactions: Transaction[];
