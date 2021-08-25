@@ -14,11 +14,11 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 
-import { RiAddLine, RiPencilLine } from "react-icons/ri";
+import { RiAddLine } from "react-icons/ri";
 import { Pagination } from "../../components/Pagination";
 import Link from "next/link";
 
@@ -27,6 +27,13 @@ export default function UserList() {
     base: false,
     large: true,
   });
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/users")
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  }, []);
+
   return (
     <Box>
       <Header />
