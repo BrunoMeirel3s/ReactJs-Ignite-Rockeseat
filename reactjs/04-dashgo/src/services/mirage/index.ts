@@ -1,4 +1,10 @@
-import { createServer, Model, Factory, Response } from "miragejs";
+import {
+  createServer,
+  Model,
+  Factory,
+  Response,
+  ActiveModelSerializer,
+} from "miragejs";
 import faker from "faker"; //faker é uma biblioteca utilizada para geração de dados fakes
 
 type User = {
@@ -9,6 +15,10 @@ type User = {
 
 export function makeServer() {
   const server = createServer({
+    serializers: {
+      application: ActiveModelSerializer,
+    },
+
     //Os modelos são as tabelas do banco
     models: {
       //Passamos parcial para informar que nem todos os campos precisam ser informados
