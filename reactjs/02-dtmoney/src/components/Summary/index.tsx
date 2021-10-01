@@ -10,7 +10,7 @@ export function Summary() {
 
   /**
    * Lembrando que o reduce percorre um vetor realizando a acomulação de valores de
-   * acordo com o filtroq que fizermos, abaixo estamos somando todos os valores que
+   * acordo com o filtro que fizermos, abaixo estamos somando todos os valores que
    * forem deposit
    */
   //const totalDeposits = transactions.reduce((acc, transaction) => {
