@@ -74,6 +74,7 @@ export function Pagination({
           number={currentPage}
           isCurrent
         />
+
         {nextPages.length > 0 &&
           nextPages.map((page) => {
             return (
@@ -84,6 +85,7 @@ export function Pagination({
               />
             );
           })}
+
         {currentPage + siblingsCount < lastPage && (
           <>
             {currentPage + 1 + siblingsCount < lastPage && (

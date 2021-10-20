@@ -30,7 +30,7 @@ import { api } from "../../services/api";
 import { getUsers } from "../../services/hooks/useUsers";
 import { GetServerSideProps, GetStaticProps } from "next";
 
-export default function UserList({ users, totalCount }) {
+export default function UserList({ users }) {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, error, isFetching } = useUsers(page, {
@@ -100,7 +100,7 @@ export default function UserList({ users, totalCount }) {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {users.map((user) => {
+                  {data.users.map((user) => {
                     return (
                       <Tr key={user.id}>
                         <Td px={["4", "4", "6"]}>
@@ -128,7 +128,7 @@ export default function UserList({ users, totalCount }) {
               </Table>
 
               <Pagination
-                totalCountOfRegisters={totalCount}
+                totalCountOfRegisters={data.totalCount}
                 currentPage={page}
                 onPageChange={setPage}
               />
