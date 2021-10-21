@@ -44,10 +44,11 @@ const CreateUserFormSchema = yup.object().shape({
 
 export default function CreateUser() {
   const router = useRouter();
+
   const createUser = useMutation(
     async (user: CreateUserFormData) => {
       const response = await api.post("users", {
-        user: { ...user, create_at: new Date() },
+        user: { ...user, created_at: new Date() },
       });
 
       return response.data.user;
