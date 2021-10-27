@@ -3,13 +3,26 @@
  * do nosso código, para isto iremos exportar um provider aqui de dentro que será
  * colocado por fora dos componentes que receberão o conteúdo daquele provider.
  */
-import { createContext, ReactNode } from "react";
+import { createContext, ReactNode, useState } from "react";
 import { api } from "../services/api";
+
+import { setCookie } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
+import Router from "next/router"; //Utilizado para realizar o redirecionamento do usuário
 
 //Type do signIn, contendo usuário e senha
 type SignInCredentials = {
   email: string;
   password: string;
+};
+
+/**
+ * Type a ser utilizado para a criação do state referente
+ * ao processo de login do usuário
+ */
+type User = {
+  email: string;
+  permissions: string[];
+  roles: string[];
 };
 
 /**
@@ -19,6 +32,7 @@ type SignInCredentials = {
 type AuthContextData = {
   signIn(credentials: SignInCredentials): Promise<void>;
   isAuthenticated: boolean;
+  user: User;
 };
 
 //Criação do contexto
@@ -35,7 +49,8 @@ type AuthProviderProps = {
  * para os componentes que utilizarem este provider
  */
 export function AuthProvider({ children }: AuthProviderProps) {
-  const isAuthenticated = false;
+  const [user, setUser] = useState<User>();
+  const isAuthenticated = !!user;
 
   async function signIn({ email, password }: SignInCredentials) {
     try {
@@ -49,14 +64,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
       });
 
-      console.log(response.data);
+      /**
+       * Abaixo estamos pegando as informações referente ao login
+       * de response.data que é o retorno do processo de login
+       * estamos também passando o email vindo no processo da
+       * chamada da funçã signIn
+       */
+      const { token, refreshToken, permissions, roles } = response.data;
+
+      /**
+       * Utilizamos a função setCookie para criarmos os cookies com as informações
+       * "token" e "refreshToken" retornadas pelo nosso backend, passamos undefined
+       * como primeiro parametro pois precisamos especificar o contexto no qual será
+       * executado o setCookie, porém como o cookie será criado do lado do cliente
+       * então passamos undefined, o segundo parametro é o nome do cookie
+       */
+      setCookie(undefined, "nextauth.token", token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days (Tempo de duração do cookie)
+        path: "/", //Permite que todas as rotas tenham acesso ao cookie
+      });
+      setCookie(undefined, "nextauth.refreshToken", refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
+
+      setUser({
+        email,
+        permissions,
+        roles,
+      });
+
+      //Router.push realiza o processo de redirecionamento do usuário para outras páginas
+      Router.push("/dashboard");
     } catch (err) {
       console.log(err);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, isAuthenticated }}>
+    <AuthContext.Provider value={{ signIn, isAuthenticated, user }}>
       {children}
     </AuthContext.Provider>
   );
