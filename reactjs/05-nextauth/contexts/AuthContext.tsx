@@ -3,10 +3,10 @@
  * do nosso código, para isto iremos exportar um provider aqui de dentro que será
  * colocado por fora dos componentes que receberão o conteúdo daquele provider.
  */
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
 
-import { setCookie } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
+import { setCookie, parseCookies } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
 import Router from "next/router"; //Utilizado para realizar o redirecionamento do usuário
 
 //Type do signIn, contendo usuário e senha
@@ -52,6 +52,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
 
+  /**
+   * Usaremos o useEffect abaixo para buscarmos os cookies do usuário
+   * principalmente o cookie nextauth.token que contém o token de login
+   * do usuário, sendo assim, caso seja encontrado o token
+   * iremos realizar uma requisição para '/me' que nos retorna os dados
+   * do usuário atualmente logado
+   */
+  useEffect(() => {
+    const { "nextauth.token": token } = parseCookies();
+
+    if (token) {
+      api.get("/me").then((response) => {
+        const { email, permissions, roles } = response.data;
+
+        setUser({ email, permissions, roles });
+      });
+    }
+  }, []);
+
   async function signIn({ email, password }: SignInCredentials) {
     try {
       /**
@@ -83,6 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         maxAge: 60 * 60 * 24 * 30, // 30 days (Tempo de duração do cookie)
         path: "/", //Permite que todas as rotas tenham acesso ao cookie
       });
+
       setCookie(undefined, "nextauth.refreshToken", refreshToken, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
@@ -93,6 +113,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         permissions,
         roles,
       });
+
+      //precisamos definir aqui também o header de Authorization com o token do usuário
+      api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
       //Router.push realiza o processo de redirecionamento do usuário para outras páginas
       Router.push("/dashboard");
