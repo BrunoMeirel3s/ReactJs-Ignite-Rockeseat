@@ -1,0 +1,30 @@
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next";
+import { parseCookies } from "nookies";
+
+/**
+ * Usaremos a função abaixo para realizar a verificação se o usuário possui
+ * token, caso possua iremos direcioná-lo para a página de dashboard
+ * Usamos aqui o conceito de uma função que retorna outra função para que
+ * possamos envolver o getServerSideProps
+ */
+export function withSSRGuest<P>(fn: GetServerSideProps<P>) {
+  return async (
+    ctx: GetServerSidePropsContext
+  ): Promise<GetServerSidePropsResult<P>> => {
+    const cookies = parseCookies(ctx);
+    if (cookies["nextauth.token"]) {
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
+      };
+    }
+
+    return await fn(ctx);
+  };
+}

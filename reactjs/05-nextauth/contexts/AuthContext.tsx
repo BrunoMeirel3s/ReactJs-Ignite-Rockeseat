@@ -4,10 +4,11 @@
  * colocado por fora dos componentes que receberão o conteúdo daquele provider.
  */
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { api } from "../services/api";
+import { setupAPIClient } from "../services/api";
 
-import { setCookie, parseCookies } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
+import { setCookie, parseCookies, destroyCookie } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
 import Router from "next/router"; //Utilizado para realizar o redirecionamento do usuário
+import { api } from "../services/apiClient";
 
 //Type do signIn, contendo usuário e senha
 type SignInCredentials = {
@@ -38,6 +39,15 @@ type AuthContextData = {
 //Criação do contexto
 export const AuthContext = createContext({} as AuthContextData);
 
+//Função para apagar os cookies e redirecionar
+export function signOut() {
+  //Como o nome sugere o destroy cookie apaga os cookies chamados
+  destroyCookie(undefined, "nextauth.token");
+  destroyCookie(undefined, "nextauth.refreshToken");
+
+  Router.push("/");
+}
+
 //type do AuthProvider, devemos informar que o AuthProvider receberá um children
 type AuthProviderProps = {
   children: ReactNode;
@@ -63,11 +73,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { "nextauth.token": token } = parseCookies();
 
     if (token) {
-      api.get("/me").then((response) => {
-        const { email, permissions, roles } = response?.data;
+      api
+        .get("/me")
+        .then((response) => {
+          const { email, permissions, roles } = response?.data;
 
-        setUser({ email, permissions, roles });
-      });
+          setUser({ email, permissions, roles });
+        })
+        .catch((error) => {
+          signOut();
+        });
     }
   }, []);
 
