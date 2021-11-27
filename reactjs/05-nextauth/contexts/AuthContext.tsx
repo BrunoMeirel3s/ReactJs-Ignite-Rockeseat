@@ -4,8 +4,6 @@
  * colocado por fora dos componentes que receberão o conteúdo daquele provider.
  */
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { setupAPIClient } from "../services/api";
-
 import { setCookie, parseCookies, destroyCookie } from "nookies"; //Biblioteca para trabalhar com cookies no Next.js
 import Router from "next/router"; //Utilizado para realizar o redirecionamento do usuário
 import { api } from "../services/apiClient";
@@ -32,6 +30,7 @@ type User = {
  */
 type AuthContextData = {
   signIn(credentials: SignInCredentials): Promise<void>;
+  signOut(): void;
   isAuthenticated: boolean;
   user: User;
 };
@@ -39,11 +38,17 @@ type AuthContextData = {
 //Criação do contexto
 export const AuthContext = createContext({} as AuthContextData);
 
+//authChannel permite enviar mensagens que podem ser ouvidas por outras abas rodando a mesma aplicação
+let authChannel: BroadcastChannel;
+
 //Função para apagar os cookies e redirecionar
 export function signOut() {
   //Como o nome sugere o destroy cookie apaga os cookies chamados
   destroyCookie(undefined, "nextauth.token");
   destroyCookie(undefined, "nextauth.refreshToken");
+
+  //envio da mensagem 'signOut' podemos em outro lugar ouvir esta mensagem e tomar uma ação
+  authChannel.postMessage("signOut");
 
   Router.push("/");
 }
@@ -61,6 +66,25 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
+
+  /**
+   * O useEffect abaixo será utilizado para ficar ouvindo a mensagem signOut
+   * caso ele a ouça será executado a função signOut que irá realizar o loggof
+   * na aplicação toda
+   */
+  useEffect(() => {
+    authChannel = new BroadcastChannel("auth");
+
+    authChannel.onmessage = (message) => {
+      switch (message.data) {
+        case "signOut":
+          signOut();
+          break;
+        default:
+          break;
+      }
+    };
+  }, []);
 
   /**
    * Usaremos o useEffect abaixo para buscarmos os cookies do usuário
@@ -101,8 +125,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       /**
        * Abaixo estamos pegando as informações referente ao login
        * de response.data que é o retorno do processo de login
-       * estamos também passando o email vindo no processo da
-       * chamada da funçã signIn
        */
       const { token, refreshToken, permissions, roles } = response.data;
 
@@ -140,7 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, isAuthenticated, user }}>
+    <AuthContext.Provider value={{ signIn, isAuthenticated, user, signOut }}>
       {children}
     </AuthContext.Provider>
   );
